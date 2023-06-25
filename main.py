@@ -1,95 +1,94 @@
 import random
-import os
+
+cards = [11, 2, 3, 4, 5, 6, 7, 8, 10, 10, 10, 10]
 
 def deal_card():
-    cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
-    card = random.choice(cards)
-    return card
+   card = random.choice(cards)
+   return card
+# Mendapatkan random card
 
 def calculate_score(cards):
-    # Hint 6: Create a function called calculate_score() that takes a List of cards as input
-    # and returns the score.
-    # Look up the sum() function to help you do this.
-    """ calculate the cards and return the score """
-    score = sum(cards)
-    # Hint 7: Inside calculate_score() check for a blackjack (a hand with only 2 cards: ace + 10) and return 0 instead of the actual score. 0 will represent a blackjack in our game.
-    # Hint 8: Inside calculate_score() check for an 11 (ace). If the score is already over 21, remove the 11 and replace it with a 1. You might need to look up append() and remove().
-    if score == 21 and len(cards) == 2:
+
+    if sum(cards) == 21 and len(cards) == 2:
         return 0
-    if 11 in cards and score > 21:
+    elif 11 in cards and sum(cards) > 21:
         cards.remove(11)
         cards.append(1)
-    return score
 
-def compare(user_scores, computer_scores):
-    # Hint 13: Create a function called compare() and pass in the user_score and computer_score. If the computer and user both have the same score, then it's a draw. If the computer has a blackjack (0), then the user loses. If the user has a blackjack (0), then the user wins. If the user_score is over 21, then the user loses. If the computer_score is over 21, then the computer loses. If none of the above, then the player with the highest score wins.
+    return sum(cards)
+# Menghitung score dari jumlah card yang didapat
+
+def compare(user_scores,computer_scores):
     if computer_scores == user_scores:
-        return "then it's a draw"
+        return print(f"You Draw")
     elif computer_scores == 0:
-        return "You Loses"
+        return print("Computer have a blackjack card. Computer win")
     elif user_scores == 0:
-        return "You Wins"
-    elif user_scores > 21:
-        return "Your score greater than 21, You Lose"
+        return print("You have a blackjack card. You Win")
     elif computer_scores > 21:
-        return "The computer score greater than 21, You win"
-    elif computer_scores > user_scores:
-        return "The computer score greater than you, You Lose"
+        return print("Computer score greater than 21. You Win")
+    elif user_scores > 21:
+        return print("Your score greater than 21. You Lose")
+    elif user_scores > computer_scores:
+        return print(f"Your score is {user_scores} greater than computer score {computer_scores}. You Win")
     else:
-        return "Your score greater than computer, You Win"
+        return print(f"Computer score is {computer_scores} greater then your score {user_scores}. You Lose")\
+# membandingkan user score dan computer score serta menentukan pemenang
 
-
-# Hint 5: Deal the user and computer 2 cards each using deal_card() and append().
-def blackjack_game():
-    user_cards = []
-    computer_cards = []
-
-    for i in range(2):
-        user_cards.append(deal_card())
+def black_jack():
+    # Mendapatkan 2 card untuk user dan computer
+    user_card = []
+    computer_card = []
 
     for i in range(2):
-        computer_cards.append(deal_card())
+        user_card.append(deal_card())
 
+    for i in range(2):
+        computer_card.append(deal_card())
 
-    # Hint 9: Call calculate_score(). If the computer or the user has a blackjack (0) or if the user's score is over 21, then the game ends.
+    # menampilkan card dari user dan first card dari computer. Serta juga mengulang mendapatkan card baru jika user ingin draw new card
     game_over = False
-
-    # Hint 11: The score will need to be rechecked with every new card drawn and the checks in Hint 9 need to be repeated until the game ends.
     while not game_over:
+        user_score = calculate_score(user_card)
 
-        user_score = calculate_score(user_cards)
-        computer_score = calculate_score(computer_cards)
+        if user_score == 0 and len(user_card) == 2:
+            print(f"Your card is {user_card} then your score is 21. You Have a BLACK JACK")
+        else:
+            print(f"Your card is {user_card} then the score is {user_score}")
 
-        print(f"your cards is {user_cards} and current score is {user_score}")
-        print(f"The first computer cards is {computer_cards[0]}")
+        print(f"The first computer card is {computer_card[0]}")
 
-
-        if user_score == 0 or computer_score == 0 or user_score > 21:
+        if user_score > 21:
             game_over = True
-            # Hint 10: If the game has not ended, ask the user if they want to draw another card. If yes, then use the deal_card() function to add another card to the user_cards List. If no, then the game has ended.
-        else:
-            user_draw = input("You wanna draw another card ? Type 'y' if yes or type 'n' if not : ")
-            if user_draw == "y":
-                user_cards.append(deal_card())
-            else:
-                game_over = True
 
-        # Hint 12: Once the user is done, it's time to let the computer play. The computer should keep drawing cards as long as it has a score less than 17.
+        user_draw_new_card = input("Wanna draw new card ? Type 'y' for yes or type 'n' for no : ")
+        if user_draw_new_card == "y":
+            user_card.append(deal_card())
+            game_over = False
+        else:
+            game_over = True
+
+    # Mengulang kondisi dimana apabila score dari computer tidak sama dengan 0 dan kurang dari 17
+    user_score = calculate_score(user_card)
+    computer_score = calculate_score(computer_card)
     while computer_score != 0 and computer_score < 17:
-        computer_cards.append(deal_card())
-        computer_score = calculate_score(computer_cards)
+        computer_card.append(deal_card())
+        computer_score = calculate_score(computer_card)
 
-        the_winners = compare(user_score, computer_score)
-        print(f"\n\nYour last cards is {user_cards} then the score is {user_score}")
-        print(f"The computer cards is {computer_cards} then the computer score is {computer_score}")
-        print(the_winners)
+    # Menampilkan pemenang dari black jack card game
+    if user_score == 0 and len(user_card) == 2:
+        print(f"\n\nYour card is {user_card} then your score is 21. You Have a BLACK JACK")
+    else:
+        print(f"\n\nYour card is {user_card} then the score is {user_score}")
+    print(f"Computer card is {computer_card} then the score is {computer_score}")
+    compare(user_score,computer_score)
 
-    # Hint 14: Ask the user if they want to restart the game. If they answer yes, clear the console and start a new game of blackjack and show the logo from art.py.
-        user_restart_the_game = input("You wanna restart the game ? Type 'y' for yes or type 'n' for not : ")
-        if user_restart_the_game == 'y':
-            os.system('cls')
-            blackjack_game()
-        else:
-            print("Thanks for playing")
+    # Restart the game
+    restart_game = input("Wanna play a black jack card game again ? type 'y' for yes or type 'n' for no : ")
+    if restart_game == "y":
+        black_jack()
+    else:
+        print("Thanks for play")
+# Black jack game
 
-blackjack_game()
+black_jack()
